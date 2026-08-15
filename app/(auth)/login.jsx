@@ -1,9 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { router } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 import {
-  Animated,
-  Easing,
   SafeAreaView,
   StyleSheet,
   Text,
@@ -12,13 +10,11 @@ import {
   View,
 } from "react-native";
 
-const SPLASH_DURATION_MS = 3000;
 const FONT_REGULAR = "Plus Jakarta Sans";
 const FONT_MEDIUM = "Plus Jakarta Sans";
 const FONT_BOLD = "Plus Jakarta Sans";
 
 export default function LoginScreen() {
-  const [showSplash, setShowSplash] = useState(true);
   const [phoneFocused, setPhoneFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
@@ -27,54 +23,6 @@ export default function LoginScreen() {
   const [loginError, setLoginError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const progress = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    progress.setValue(1);
-    const pulse = Animated.loop(
-      Animated.sequence([
-        Animated.timing(progress, {
-          toValue: 1.08,
-          duration: 700,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(progress, {
-          toValue: 1,
-          duration: 700,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    );
-    pulse.start();
-
-    const fallbackTimeout = setTimeout(() => {
-      setShowSplash(false);
-    }, SPLASH_DURATION_MS);
-
-    return () => {
-      pulse.stop();
-      clearTimeout(fallbackTimeout);
-    };
-  }, [progress]);
-
-  const logoScale = progress;
-
-  if (showSplash) {
-    return (
-      <SafeAreaView style={styles.splashContainer}>
-        <View style={styles.splashContent}>
-          <Animated.Image
-            source={require("../../assets/images/morebytes.png")}
-            style={[styles.splashLogo, { transform: [{ scale: logoScale }] }]}
-          />
-          <Text style={styles.tagline}>Good food for Good life</Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.loginContainer}>
       <View style={styles.loginHeader}>
@@ -167,29 +115,6 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  splashContainer: {
-    flex: 1,
-    backgroundColor: "#F97000",
-    justifyContent: "center",
-    alignItems: "center",
-    paddingHorizontal: 24,
-  },
-  splashContent: {
-    alignItems: "center",
-  },
-  splashLogo: {
-    width: 215,
-    height: 215,
-    resizeMode: "contain",
-  },
-  tagline: {
-    marginTop: 24,
-    fontFamily: FONT_MEDIUM,
-    color: "#FFFFFF",
-    fontSize: 30,
-    textAlign: "center",
-    lineHeight: 36,
-  },
   loginContainer: {
     flex: 1,
     backgroundColor: "#ECECEC",
