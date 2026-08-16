@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FONT = "Plus Jakarta Sans";
 const PHONE_PATTERN = /^09\d{9}$/;
@@ -16,6 +17,15 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState(""); const [confirmPassword, setConfirmPassword] = useState("");
   const [visible, setVisible] = useState(false); const [confirmVisible, setConfirmVisible] = useState(false);
   const [focusedField, setFocusedField] = useState(""); const [errors, setErrors] = useState({}); const [generalError, setGeneralError] = useState("");
+  const [accounts, setAccounts] = useState([]);
+  useEffect(() => {
+    // Load saved accounts when the screen opens.
+    const loadAccounts = async () => {
+      const savedAccounts = await AsyncStorage.getItem("registered_accounts");
+      setAccounts(savedAccounts ? JSON.parse(savedAccounts) : []);
+    };
+    loadAccounts();
+  }, []);
   const strength = password.length < 6 ? { label: "Weak", color: "#D94343", width: "33%" } : password.length >= 8 && /\d/.test(password) && /[^A-Za-z0-9]/.test(password) ? { label: "Strong", color: "#22C55E", width: "100%" } : { label: "Medium", color: "#F97000", width: "66%" };
   const validate = () => {
     const next = {};
@@ -28,6 +38,19 @@ export default function RegisterScreen() {
     setErrors(next); setGeneralError(Object.keys(next).length ? "Please correct the highlighted fields." : "");
     return Object.keys(next).length === 0;
   };
+  const createAccount = async () => {
+    if (!validate()) return;
+    if (accounts.some((account) => account.phone === phone)) {
+      setErrors({ phone: "Phone number already registered" });
+      setGeneralError("Please correct the highlighted fields.");
+      return;
+    }
+    const newAccount = { fullName, phone, password, createdAt: new Date().toISOString() };
+    const updatedAccounts = [...accounts, newAccount];
+    await AsyncStorage.setItem("registered_accounts", JSON.stringify(updatedAccounts));
+    setAccounts(updatedAccounts);
+    router.push("/(auth)/login");
+  };
   const inputStyle = (name) => [styles.inputWrap, focusedField === name && styles.focusedInput, errors[name] && styles.errorInput];
   return <SafeAreaView style={styles.container}><ScrollView contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
     <Text style={styles.title}>Create Account</Text><Text style={styles.subtitle}>Fill in your details to get started</Text><View style={styles.divider} />
@@ -37,7 +60,7 @@ export default function RegisterScreen() {
     <Text style={styles.label}>PASSWORD</Text><View style={inputStyle("password")}><TextInput style={styles.input} secureTextEntry={!visible} placeholder="Enter your password" placeholderTextColor="#9CA3AF" value={password} onChangeText={setPassword} onFocus={() => setFocusedField("password")} onBlur={() => setFocusedField("")} /><TouchableOpacity onPress={() => setVisible(!visible)}><Ionicons name={visible ? "eye-outline" : "eye-off-outline"} size={20} color="#9CA3AF" /></TouchableOpacity></View><FieldError message={errors.password} />
     {password ? <View style={styles.strengthRow}><View style={styles.strengthTrack}><View style={[styles.strengthFill, { backgroundColor: strength.color, width: strength.width }]} /></View><Text style={[styles.strengthText, { color: strength.color }]}>{strength.label}</Text></View> : null}
     <Text style={styles.label}>CONFIRM PASSWORD</Text><View style={inputStyle("confirmPassword")}><TextInput style={styles.input} secureTextEntry={!confirmVisible} placeholder="Re-enter your password" placeholderTextColor="#9CA3AF" value={confirmPassword} onChangeText={setConfirmPassword} onFocus={() => setFocusedField("confirmPassword")} onBlur={() => setFocusedField("")} /><TouchableOpacity onPress={() => setConfirmVisible(!confirmVisible)}><Ionicons name={confirmVisible ? "eye-outline" : "eye-off-outline"} size={20} color="#9CA3AF" /></TouchableOpacity></View><FieldError message={errors.confirmPassword} />
-    <TouchableOpacity style={styles.primaryButton} activeOpacity={0.85} onPress={() => validate() && router.push({ pathname: "/(auth)/verify-otp", params: { phone } })}><Text style={styles.primaryText}>Create Account</Text></TouchableOpacity>
+    <TouchableOpacity style={styles.primaryButton} activeOpacity={0.85} onPress={createAccount}><Text style={styles.primaryText}>Create Account</Text></TouchableOpacity>
     <View style={styles.loginRow}><Text style={styles.loginText}>Already have an account? </Text><TouchableOpacity onPress={() => router.replace("/(auth)/login")}><Text style={styles.loginLink}>Login here</Text></TouchableOpacity></View>
   </ScrollView></SafeAreaView>;
 }

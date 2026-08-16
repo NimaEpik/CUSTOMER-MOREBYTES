@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { router } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   SafeAreaView,
   StyleSheet,
@@ -23,6 +24,41 @@ export default function LoginScreen() {
   const [loginError, setLoginError] = useState("");
   const [phoneError, setPhoneError] = useState("");
   const [passwordError, setPasswordError] = useState("");
+  const signIn = async () => {
+    const hasPhone = phoneValue.trim().length > 0;
+    const hasPassword = passwordValue.trim().length > 0;
+
+    if (!hasPhone || !hasPassword) {
+      setLoginError("Incorrect phone number or password. Please try again.");
+      setPhoneError(!hasPhone ? "Phone number is required" : "");
+      setPasswordError(!hasPassword ? "Password is required" : "");
+      return;
+    }
+
+    // Read the latest saved accounts for each sign-in attempt.
+    const savedAccounts = await AsyncStorage.getItem("registered_accounts");
+    const accounts = savedAccounts ? JSON.parse(savedAccounts) : [];
+    const account = accounts.find((savedAccount) => savedAccount.phone === phoneValue);
+
+    if (!account) {
+      setLoginError("");
+      setPhoneError("Phone number not found");
+      setPasswordError("");
+      return;
+    }
+    if (account.password !== passwordValue) {
+      setLoginError("");
+      setPhoneError("");
+      setPasswordError("Incorrect Password");
+      return;
+    }
+
+    await AsyncStorage.setItem("current_user", JSON.stringify({ fullName: account.fullName, phone: account.phone }));
+    setLoginError("");
+    setPhoneError("");
+    setPasswordError("");
+    router.push("/(tabs)/home");
+  };
   return (
     <SafeAreaView style={styles.loginContainer}>
       <View style={styles.loginHeader}>
@@ -85,21 +121,7 @@ export default function LoginScreen() {
           <Text style={styles.forgotText}>Forgot password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.signInButton} activeOpacity={0.85} onPress={() => {
-          const hasPhone = phoneValue.trim().length > 0;
-          const hasPassword = passwordValue.trim().length > 0;
-
-          if (!hasPhone || !hasPassword) {
-            setLoginError("Incorrect phone number or password. Please try again.");
-            setPhoneError(!hasPhone ? "Phone number is required" : "Phone number not found");
-            setPasswordError(!hasPassword ? "Password is required" : "Incorrect Password");
-            return;
-          }
-
-          setLoginError("");
-          setPhoneError("");
-          setPasswordError("");
-        }}>
+        <TouchableOpacity style={styles.signInButton} activeOpacity={0.85} onPress={signIn}>
           <Text style={styles.signInText}>Sign In</Text>
         </TouchableOpacity>
       </View>
