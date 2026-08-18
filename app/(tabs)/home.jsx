@@ -15,11 +15,27 @@ import { useCart } from "../../src/context/CartContext";
 const ORANGE = "#F97000";
 const CATEGORIES = ["All", "Pizza", "Snacks", "Desserts", "Beverages", "Rice Meals"];
 
+// Size tiers for pizzas — used to populate the Choose Size pills on food details.
+const PIZZA_SIZES_285 = [
+  { sizeName: "Medium 9\"", price: 285 },
+  { sizeName: "Large 12\"", price: 395 },
+  { sizeName: "XL 15\"", price: 480 },
+  { sizeName: "Jumbo 18\"", price: 695 },
+  { sizeName: "Party 24\"", price: 1185 },
+];
+const PIZZA_SIZES_265 = [
+  { sizeName: "Medium 9\"", price: 265 },
+  { sizeName: "Large 12\"", price: 355 },
+  { sizeName: "XL 15\"", price: 449 },
+  { sizeName: "Jumbo 18\"", price: 649 },
+  { sizeName: "Party 24\"", price: 995 },
+];
+
 // Replace this local data with the menu API response when it is available.
 const MENU_ITEMS = [
-  { id: "supreme-pizza", name: "Supreme Pizza", category: "Pizza", price: 285, priceLabel: "₱285 - ₱1185", hasSizes: true },
-  { id: "full-house", name: "Full House", category: "Pizza", price: 285, priceLabel: "₱285 - ₱1185", hasSizes: true },
-  { id: "pepperoni-pizza", name: "Pepperoni Pizza", category: "Pizza", price: 265, priceLabel: "₱265 - ₱995", hasSizes: true },
+  { id: "supreme-pizza", name: "Supreme Pizza", category: "Pizza", price: 285, priceLabel: "₱285 - ₱1185", hasSizes: true, sizes: PIZZA_SIZES_285 },
+  { id: "full-house", name: "Full House", category: "Pizza", price: 285, priceLabel: "₱285 - ₱1185", hasSizes: true, sizes: PIZZA_SIZES_285 },
+  { id: "pepperoni-pizza", name: "Pepperoni Pizza", category: "Pizza", price: 265, priceLabel: "₱265 - ₱995", hasSizes: true, sizes: PIZZA_SIZES_265 },
   { id: "chicken-wing", name: "Chicken Wing", category: "Snacks", price: 349, priceLabel: "₱349", hasSizes: false },
   { id: "fries", name: "Fries", category: "Snacks", price: 65, priceLabel: "₱65", hasSizes: false },
   { id: "heavenly-ube", name: "Heavenly Ube", category: "Desserts", price: 185, priceLabel: "₱185", hasSizes: false },

@@ -129,8 +129,13 @@ export default function FoodDetailsScreen() {
                   return (
                     <Pressable
                       key={size.sizeName}
-                      style={[styles.sizeButton, isSelected && styles.selectedSizeButton]}
+                      style={({ pressed }) => [
+                        styles.sizeButton,
+                        isSelected && styles.selectedSizeButton,
+                        pressed && styles.pressedSizeButton,
+                      ]}
                       onPress={() => setSelectedSize(size)}
+                      hitSlop={4}
                     >
                       <Text style={[styles.sizeName, isSelected && styles.selectedSizeText]}>
                         {size.sizeName}
@@ -288,6 +293,9 @@ const styles = StyleSheet.create({
   selectedSizeButton: {
     backgroundColor: "#121212",
     borderColor: "#121212",
+  },
+  pressedSizeButton: {
+    opacity: 0.7,
   },
   sizeName: {
     color: "#121212",
