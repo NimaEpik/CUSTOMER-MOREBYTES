@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { router } from "expo-router";
-import { Animated, Easing, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Animated, Easing, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const FONT = "Plus Jakarta Sans";
 

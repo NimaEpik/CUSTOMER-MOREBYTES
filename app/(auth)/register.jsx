@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { SafeAreaView, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const FONT = "Plus Jakarta Sans";
@@ -40,10 +41,10 @@ export default function RegisterScreen() {
 
   const strength =
     password.length < 6
-      ? { label: "Weak", color: "#D94343", width: "33%" }
+      ? { label: "Weak", color: "#D94343", level: 1 }
       : password.length >= 8 && /\d/.test(password) && /[^A-Za-z0-9]/.test(password)
-        ? { label: "Strong", color: "#22C55E", width: "100%" }
-        : { label: "Medium", color: "#F97000", width: "66%" };
+        ? { label: "Strong", color: "#22C55E", level: 3 }
+        : { label: "Medium", color: "#F97000", level: 2 };
 
   const validate = () => {
     const next = {};
@@ -148,8 +149,16 @@ export default function RegisterScreen() {
 
         {password ? (
           <View style={styles.strengthRow}>
-            <View style={styles.strengthTrack}>
-              <View style={[styles.strengthFill, { backgroundColor: strength.color, width: strength.width }]} />
+            <View style={styles.strengthBars}>
+              {[1, 2, 3].map((level) => (
+                <View
+                  key={level}
+                  style={[
+                    styles.strengthBar,
+                    level <= strength.level && { backgroundColor: strength.color },
+                  ]}
+                />
+              ))}
             </View>
             <Text style={[styles.strengthText, { color: strength.color }]}>{strength.label}</Text>
           </View>
@@ -283,16 +292,16 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 7,
   },
-  strengthTrack: {
-    backgroundColor: "#E5E7EB",
-    borderRadius: 2,
+  strengthBars: {
     flex: 1,
-    height: 3,
-    overflow: "hidden",
+    flexDirection: "row",
+    gap: 8,
   },
-  strengthFill: {
-    borderRadius: 2,
-    height: "100%",
+  strengthBar: {
+    flex: 1,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: "#D4D4D4",
   },
   strengthText: {
     fontFamily: FONT,

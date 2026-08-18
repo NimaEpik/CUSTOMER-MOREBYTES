@@ -3,13 +3,13 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import {
   Image,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const FONT = "Plus Jakarta Sans";
 const PHONE_PATTERN = /^09\d{9}$/;

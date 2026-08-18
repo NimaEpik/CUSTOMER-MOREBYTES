@@ -10,6 +10,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useCart } from "../../src/context/CartContext";
 
 const ORANGE = "#F97000";
@@ -124,7 +125,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <View style={styles.screen}>
+    <SafeAreaView style={styles.screen} edges={["top"]}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <View style={styles.greetingRow}>
@@ -184,7 +185,7 @@ export default function HomeScreen() {
 
         {renderCategorySections()}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
