@@ -212,7 +212,7 @@ function OrderDetailsModal({ visible, order, onClose }) {
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable style={styles.modalOverlay} onPress={onClose}>
+      <Pressable style={styles.detailsModalOverlay} onPress={onClose}>
         <Pressable style={styles.detailsSheet} onPress={(event) => event.stopPropagation()}>
           <ScrollView showsVerticalScrollIndicator={false}>
             <View style={styles.detailsHeader}>
@@ -621,15 +621,24 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    justifyContent: "flex-end",
     backgroundColor: "rgba(18, 18, 18, 0.45)",
   },
   notificationsSheet: {
+    marginTop: 66,
     marginHorizontal: 12,
-    marginBottom: 86,
     borderRadius: 16,
     backgroundColor: "#FFFFFF",
     overflow: "hidden",
+    shadowColor: "#000000",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  detailsModalOverlay: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(18, 18, 18, 0.45)",
   },
   sheetHeader: {
     height: 52,
